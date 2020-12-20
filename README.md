@@ -1,2 +1,2 @@
 # cmd-plus-plus
-Simple console on Python
+Simple console on Python☺
