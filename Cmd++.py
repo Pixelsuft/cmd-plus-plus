@@ -126,10 +126,13 @@ try:
                 if path_to_change_2=='':
                     if cmd=='cd':
                         print(f'cd {path_bg_color}{path_fg_color}"path-to-change"{Style.RESET_ALL}')
+                        result='__CMD_PLUS_PLUS_ERROR'
                     elif cmd=='chdir':
                         print(f'chdir {path_bg_color}{path_fg_color}"path-to-change"{Style.RESET_ALL}')
+                        result='__CMD_PLUS_PLUS_ERROR'
                 else:
-                    print(f'Path {path_to_change_2} is not exists!')
+                    print(f'Path "{path_bg_color}{path_fg_color}{path_to_change_2}{Style.RESET_ALL}" is not exists!')
+                    result='__CMD_PLUS_PLUS_ERROR'
         elif cmd=='whoami':
             print(os.getlogin())
             result=os.getlogin()
@@ -137,8 +140,10 @@ try:
             msg_text=get_args(command)
             if msg_text=='':
                 print(f'echo {path_bg_color}{path_fg_color}text-to-show{Style.RESET_ALL}')
+                result='__CMD_PLUS_PLUS_ERROR'
             else:
                 print(msg_text)
+                result=msg_text
         elif cmd=='dir':
             files=[]
             path=''
@@ -155,7 +160,8 @@ try:
                         result+='\n'
                     result+=i
             except:
-                print(f'Path not {path_bg_color}{path_fg_color}{path[:len(path)-1]}{Style.RESET_ALL} found')
+                print(f'Path "{path_bg_color}{path_fg_color}{path[:len(path)-1]}{Style.RESET_ALL}" not found')
+                result='__CMD_PLUS_PLUS_ERROR'
         elif cmd=='scandir':
             args=get_args(command)
             if args=='':
@@ -216,6 +222,7 @@ try:
             args_set=get_args_mas(command.replace('=',' '))
             if get_args(command).replace('"','').replace("'","")=='':
                 print(f'set {path_bg_color}{path_fg_color}name{Style.RESET_ALL}={path_bg_color}{path_fg_color}value{Style.RESET_ALL}')
+                result='__CMD_PLUS_PLUS_ERROR'
             else:
                 try:
                     args_mas=get_args_mas(command.replace("="," "))
@@ -232,8 +239,10 @@ try:
                     send_cmd(value_env)
                     
                     os.environ[name_env]=os.environ['__CMD_PLUS_PLUS_RESULT']
+                    result=str(name_env+' = '+os.environ['__CMD_PLUS_PLUS_RESULT'])
                 except:
                     print(f'set {path_bg_color}{path_fg_color}name{Style.RESET_ALL}={path_bg_color}{path_fg_color}value{Style.RESET_ALL}')
+                    result='__CMD_PLUS_PLUS_ERROR'
         elif cmd=='remove_set':
             if get_args(command).replace('"','').replace("'","")=='':
                 print(f'remove_set {path_bg_color}{path_fg_color}name{Style.RESET_ALL}')
@@ -298,6 +307,7 @@ try:
                     echo_on=before_echo
                 except:
                     print(f'File {path_bg_color}{path_fg_color}{path_to_file}{Style.RESET_ALL} is not exists!')
+                    result='__CMD_PLUS_PLUS_ERROR'
         else:
             path_to_file=command
             path_to_file=path_to_file.replace('"','')
@@ -310,7 +320,8 @@ try:
                 os.system(command)
         if echo_on==True:
             if not result=='':
-                print(result)
+                if not result=='__CMD_PLUS_PLUS_ERROR':
+                    print(result)
         os.environ['__CMD_PLUS_PLUS_RESULT']=result
 
     #On start
