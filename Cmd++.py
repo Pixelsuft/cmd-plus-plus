@@ -20,7 +20,8 @@ try:
     echo_on=True
     alert_title='Alert!'
     confirm_title='Confirm!'
-    prompt_title='prompt!'
+    prompt_title='Prompt!'
+    sync_enc='utf-8'
     disk_names=['a:','b:','c:','d:','e:','f:','g:','h:','i:','j:','k:','l:','m:','n:','o:','p:','q:','r:','s:','t:','u:','v:','w:','x:','y:','z:']
     
     
@@ -29,7 +30,7 @@ try:
     bg_color=Back.RESET
     #fg_color=Fore.GREEN
     fg_color=Fore.WHITE
-
+    
     #Functions
     def get_args(command):
         command_split=command.split(' ')
@@ -103,7 +104,7 @@ try:
             ctypes.windll.kernel32.SetConsoleTitleW(title_text+' - '+command_split[0]+' ('+get_args(command)+')')
         if cmd=='cls' or cmd=='clear':
             print('\033[2J')
-        elif cmd=='exit' or  cmd=='quit' or cmd=='close':
+        elif cmd=='exit' or  cmd=='quit' or cmd=='close' or cmd=='q':
             exit()
         elif cmd=='cd' or cmd=='chdir':
             path_to_change=''
@@ -151,7 +152,6 @@ try:
             try:
                 files=os.listdir(path)
                 for i in files:
-                    print(i)
                     result+=i
             except:
                 print(f'Path not {path_bg_color}{path_fg_color}{path[:len(path)-1]}{Style.RESET_ALL} found')
@@ -161,11 +161,6 @@ try:
                 os.system('dir')
             else:
                 os.system('dir '+args)
-        elif cmd=='exec':
-            args=get_args(command)
-            args=args.replace('"','')
-            args=args.replace("'","")
-            print(args)
         elif cmd=='@echo':
             global echo_on
             if 'on' in command_low_split:
@@ -179,6 +174,8 @@ try:
             result=pyautogui.alert(get_args(command), alert_title)
         elif cmd=='alert_title':
             alert_title=get_args(command)
+        elif cmd=='input':
+            result=input(get_args(command))
         elif cmd=='confirm':
             global confirm_title
             result=pyautogui.confirm(get_args(command), confirm_title)
@@ -201,12 +198,12 @@ try:
                 path=get_args_mas_test(command)
             for i in path:
                 if show_name==True:
-                    print(f'{i}:')
+                    result+=f'{i}:'
                 try:
                     f=open(f'{i}','r')
                     for j in f.readlines():
                         fx=j.replace("\n","")
-                        print(f'{fx}')
+                        #print(f'{fx}')
                         if result=='':
                             result=fx
                         else:
@@ -243,14 +240,23 @@ try:
                 os.environ[get_args(command)]=''
         elif cmd=='ver' or cmd=='version':
             os.system('ver')
-            print(f'{Back.WHITE}{Fore.BLACK}Pixelsuft CMD++ [Version 1.0]')
-            print(f'{Back.WHITE}{Fore.BLACK}(c) Корпорация Пиксельсуфт (Pixelsuft Corporation), 2020. Все права защищены.')
+            result=f'{Back.WHITE}{Fore.BLACK}Pixelsuft CMD++ [Version 1.0]'
+            result=f'{Back.WHITE}{Fore.BLACK}(c) Корпорация Пиксельсуфт (Pixelsuft Corporation), 2020. Все права защищены.'
         elif cmd=='sync':
-            result=f'{subprocess.check_output(get_args(command), shell=True)}'
+            global sync_enc
+            try:
+                result=subprocess.check_output(get_args(command), shell=True, encoding=str(sync_enc))
+            except:
+                result='__CMD_PLUS_PLUS_ERROR'
+        elif cmd=='sync_encode':
+            sync_enc=get_args(command)
+            result=sync_enc
         elif cmd=='color':
             pass
         elif cmd=='str' or cmd=='string':
             result=get_args(command)
+        elif cmd=='reverse':
+            result=get_args(command)[::-1]
         elif cmd=='input':
             result=input('')
         elif cmd=='title':
@@ -260,8 +266,8 @@ try:
                 title_text='Cmd++'
         elif cmd=='':
             pass
-        elif cmd in disk_names:
-            send_cmd('cd '+ cmd)
+        elif cmd[:2] in disk_names:
+            send_cmd('cd '+ command)
         elif cmd=='batrun':
             path_to_file=get_args(command)
             path_to_file=path_to_file.replace('"','')
@@ -275,6 +281,8 @@ try:
                     before_echo=echo_on
                     i=0
                     while i<len(text):
+                        if echo_on==True:
+                            print(path_bg_color+path_fg_color+where_me+">>"+bg_color+fg_color+text[i])
                         if text[i].split(' ')[0]=='goto':
                             j=0
                             while j<len(text):
@@ -299,6 +307,9 @@ try:
                 send_cmd('batrun '+path_to_file)
             else:
                 os.system(command)
+        if echo_on==True:
+            if not result=='':
+                print(result)
         os.environ['__CMD_PLUS_PLUS_RESULT']=result
 
     #On start
