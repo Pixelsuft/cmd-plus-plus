@@ -148,10 +148,11 @@ try:
                 path=get_args(command).replace('"','').replace("'","").replace('\\','/')
                 if not path[-1]=='/':
                     path=path+'/'
-            print('path')
             try:
                 files=os.listdir(path)
                 for i in files:
+                    if not result=='':
+                        result+='\n'
                     result+=i
             except:
                 print(f'Path not {path_bg_color}{path_fg_color}{path[:len(path)-1]}{Style.RESET_ALL} found')
