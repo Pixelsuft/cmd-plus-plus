@@ -143,7 +143,7 @@ try:
                 result='__CMD_PLUS_PLUS_ERROR'
             else:
                 print(msg_text)
-                result=msg_text
+                #result=msg_text
         elif cmd=='dir':
             files=[]
             path=''
@@ -267,6 +267,9 @@ try:
             result=get_args(command)
         elif cmd=='reverse':
             result=get_args(command)[::-1]
+        elif cmd=='default':
+            os.system(get_args(command))
+            result=''
         elif cmd=='input':
             result=input('')
         elif cmd=='title':
@@ -292,8 +295,9 @@ try:
                     i=0
                     while i<len(text):
                         if echo_on==True:
-                            print(path_bg_color+path_fg_color+where_me+">>"+bg_color+fg_color+text[i])
-                        if text[i].split(' ')[0]=='goto':
+                            if not text[i].split(' ')[0].lower()=='@echo':
+                                print(path_bg_color+path_fg_color+where_me+">>"+bg_color+fg_color+text[i])
+                        if text[i].split(' ')[0].lower()=='goto':
                             j=0
                             while j<len(text):
                                 if text[j]==':'+get_args(text[i]):
@@ -317,7 +321,14 @@ try:
             if type=='cmd' or type=='bat' or type=='sh' or type=='cmdpp':
                 send_cmd('batrun '+path_to_file)
             else:
-                os.system(command)
+                canload=True
+                for i in ['cmd','bat','sh','cmdpp']:
+                    if os.access(path_to_file+'.'+i,os.F_OK):
+                        if canload==True:
+                            canload=False
+                            send_cmd('batrun '+path_to_file+'.'+i)
+                if canload==True:
+                    os.system(command)
         if echo_on==True:
             if not result=='':
                 if not result=='__CMD_PLUS_PLUS_ERROR':
