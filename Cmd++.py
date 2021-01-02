@@ -6,7 +6,7 @@ try:
     import datetime
     from colorama import init as color_init
     from colorama import Fore, Back, Style
-    import pyautogui
+    #import pyautogui
     from sys import argv as start_params_mas
     import ctypes
     
@@ -178,14 +178,19 @@ try:
                 result='off'
         elif cmd=='alert':
             global alert_title
-            result=pyautogui.alert(get_args(command), alert_title)
+            print(alert_title+'\n\n'+get_args(command))
+            result=''
+            #result=pyautogui.alert(get_args(command), alert_title)
         elif cmd=='alert_title':
             alert_title=get_args(command)
         elif cmd=='input':
             result=input(get_args(command))
         elif cmd=='confirm':
             global confirm_title
-            result=pyautogui.confirm(get_args(command), confirm_title)
+            #result=pyautogui.confirm(get_args(command), confirm_title)
+            result=input(confirm_title+'\n\n'+get_args(command)).upper()
+            if not result=='OK':
+                result='CANCEL'
         elif cmd=='confirm_title':
             confirm_title=get_args(command)
         elif cmd=='cat':
